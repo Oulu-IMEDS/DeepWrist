@@ -1,0 +1,20 @@
+FROM ubuntu:18.04
+MAINTAINER Abu Mohammed Raisuddin, MIPT, Faculty of Medicine, University of Oulu
+
+RUN apt-get update && apt-get upgrade -y
+
+RUN apt-get install wget -y
+RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+RUN chmod +x Miniconda3-latest-Linux-x86_64.sh
+
+RUN bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda
+
+ENV PATH=/opt/conda/bin:${PATH}
+
+RUN apt-get remove -y --auto-remove wget
+RUN conda install -c intel mkl_fft=1.0.15
+RUN apt-get install -y python3-pip git
+COPY . /opt/app
+WORKDIR /opt/app
+RUN pip install -r requirements.txt
