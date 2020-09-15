@@ -1,0 +1,34 @@
+workdir: /home/backbencher/DATA/Wrist/fracture_detector
+deterministic: true
+seed: 12345
+random_seed: true
+verbose: false
+original_cwd: ~
+tb_flush_sec: 5
+logging:
+  formatters:
+    simple:
+      format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: simple
+      stream: ext://sys.stdout
+    file:
+      class: logging.FileHandler
+      filename: ${snapshot_dir}/logs/pipeline.log
+      formatter: simple
+  root:
+    handlers:
+      - console
+      - file
+    level: INFO
+  version: 1
+train_params:
+  gpus: ~
+  checkpoint:
+    metric: loss
+    mode: min
+    keep_old: true
+defaults:
+  - experiment: fracture_detector_seresnet

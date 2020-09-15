@@ -1,0 +1,30 @@
+dataset:
+  name: WristFracture
+  val: 0.1
+  n_data_workers: 1
+  side: 0
+  crop_size: 256
+  train_data_home: /home/backbencher/DATA/wrist_data/landmark_data
+  data_home: /home/backbencher/DATA/wrist_data/Rais/train/detection_raw_data
+  data_folder: wrist_dataset
+  meta: /home/backbencher/DATA/wrist_data/Rais/OYS_fractures_dataset.csv
+  save_path: /home/backbencher/DATA/wrist_data
+snapshot_folder: /home/backbencher/DATA/Wrist/localizer/snapshots/HourglassNet_PTL_2020-07-03_19-27-11
+save_image: true
+save_image_dir: /home/backbencher/DATA/Wrist/localizer/imgs
+model:
+  name: HourglassNet_PTL
+  class: localizer.model.${model.name}
+  params:
+      n_inputs: 1 # input channel
+      n_outputs: 3
+      bw: 64
+      hg_depth: 6
+      upmode: 'bilinear'
+      multiscale_hg_block: false
+      se: false
+      se_ratio: 16
+      use_drop: false
+loss:
+  class_name: torch.nn.SmoothL1Loss
+

@@ -1,0 +1,66 @@
+snapshot_dir: ${workdir}/snapshots/${model.name}_${now:%Y-%m-%d}_${now:%H-%M-%S}
+dataset:
+  name: WristLandmark
+  n_data_workers: 1
+  data_home: /home/backbencher/DATA/wrist_data/
+  data_folder: landmark_data
+  meta: landmark_train_meta.csv
+  side:
+    - 0
+    - 1
+  crop_size: 256
+  use_cutout: true
+  cutout: 0.1
+  use_target_jitter: true
+  augs:
+    flip:
+        axis: 1
+        p: 0.5
+    pad:
+        pad_x: 300
+        pad_y: 300
+    crop:
+        crop_x: 256
+        crop_y: 256
+pipeline: localizer
+loss:
+  class_name: torch.nn.MSELoss
+optimizer:
+  class_name: torch.optim.SGD
+  params:
+    lr: 1e-1
+  scheduler:
+    class_name: torch.optim.lr_scheduler.MultiStepLR
+    params:
+      gamma: 0.1
+      milestones:
+        - 150
+        - 200
+        - 250
+
+train_params:
+  train_bs: 24
+  val_bs: 24
+  n_epochs: 300
+  n_fold : 5
+  mixup:
+    enabled: true
+    alpha: 0.4
+local_rank: 0
+model:
+  name: HourglassNet_PTL
+  class: localizer.model.${model.name}
+  params:
+    n_inputs: 1 # input channel
+    n_outputs: 3
+    bw: 64
+    hg_depth: 6
+    upmode: 'bilinear'
+    multiscale_hg_block: false
+    se: false
+    se_ratio: 16
+tensorboard:
+  use: true
+  log_dir: ${workdir}/tensorboard/${dataset.name}_${model.name}_${now:%Y-%m-%d}_${now:%H-%M-%S}
+  comment: 'no comment'
+
