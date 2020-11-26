@@ -23,41 +23,34 @@ def squared_error(x, y):
 
 if __name__ == '__main__':
     train_file = 'analysis/data_0_pred.csv'
-    test1_file = 'analysis/data_1.csv'
-    test2_file = 'analysis/data_2.csv'
+    test1_file = 'analysis/data_1_pred.csv'
+    test2_file = 'analysis/data_2_pred.csv'
     # load train data
-    train_meta = pd.read_csv(train_file)
+    train_meta = pd.read_csv(test2_file)
     gkf = GroupKFold(5)
     learned_models = list()
     val_proba_list = list()
     val_gt_list = list()
+    limit = 5
     data = train_meta.values[:, 2:4].astype(np.float32)
     mean = np.mean(data, axis=0)
     std = np.std(data, axis=0)
-    for fold, (train_ind, val_ind) in enumerate(gkf.split(train_meta, train_meta.Prediction, train_meta.ID)):
-        train_data = train_meta.iloc[train_ind].values
-        val_data = train_meta.iloc[val_ind].values
-        train_x, train_y = train_data[:,2:4], train_data[:, 4]
-        train_x = np.asarray(train_x).astype(np.float32)
+    train_data = train_meta.values
+
+    train_x, train_y = train_data[:,2:limit], train_data[:, 5]
+    train_x = np.asarray(train_x).astype(np.float32)
+    if limit == 5:
+        train_x[:, :-1] = (train_x[:, :-1] - mean) / std
+    else:
         train_x = (train_x - mean) / std
-        train_y = np.asarray(train_y).astype(np.float32)
-        # model = LogisticRegression(2)
-        # _ = model.fit(train_x, train_y, 1e-1, 50)
-        model = sm.Logit(train_y, train_x)
-        result = model.fit()
-        print(result.summary())
-        learned_models.append(model)
-        val_x, val_y = val_data[:, 2:4], val_data[:, 4]
-        val_x = (val_x - mean) / std
-        val_gt = val_data[:, 5]
-        val_x = np.asarray(val_x).astype(np.float32)
-        val_y = np.asarray(val_y).astype(np.float32)
-        # loss = model.pdf(val_x)
-        prob = model.pdf(val_x)
-        val_proba_list += list(prob)
-        val_gt_list += list(val_gt)
-        # print(f'Fold #{fold} Validation Loss: ', loss)
-        break
+    train_y = np.asarray(train_y).astype(np.float32)
+    # model = LogisticRegression(2)
+    # _ = model.fit(train_x, train_y, 1e-1, 50)
+    model = sm.Logit(train_y, train_x)
+    result = model.fit()
+    print(result.summary())
+    print(f'Fold #')
+
     # val_prob = np.asarray(val_proba_list)
     # val_gt = np.asarray(val_gt_list)
     # best_th = -1

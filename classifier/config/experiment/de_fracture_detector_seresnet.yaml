@@ -1,0 +1,70 @@
+snapshot_dir: ${workdir}/snapshots/${dataset.name}_${model.name}_${now:%Y-%m-%d}_${now:%H-%M-%S}
+dataset:
+  name: WristFracture
+  n_data_workers: 0
+  data_home: /home/backbencher/DATA/wrist_data/preprocessed_fixed
+  data_folder: ~
+  meta: dataset_meta.csv
+  side:
+    - 1
+    - 0
+  crop_size: 224
+  use_cutout: true
+  cutout: 0.1
+  use_target_jitter: false
+  keep_test_data: true
+  renew_test_split: true
+  augs:
+    flip:
+      axis: 1
+      p: 0.5
+    pad:
+      pad_x: 300
+      pad_y: 300
+    crop:
+      crop_x: 256
+      crop_y: 256
+
+pipeline: classifier
+loss:
+  class_name: torch.nn.CrossEntropyLoss
+  params: ~
+optimizer:
+  name: SGD
+  class_name: torch.optim.SGD
+  params:
+    lr: 1e-1
+    weight_decay: 5e-4
+  scheduler:
+    name: MultiStepLR
+    gamma: 0.1
+    milestones:
+      - 150
+      - 200
+      - 250
+train_params:
+  train_bs: 32
+  val_bs: 32
+  n_epochs: 300
+  fgsm: false
+  num_ensemble: 9
+  mixup:
+    enabled: false
+    alpha: 0.7
+
+
+local_rank: 1
+model:
+  name: SeResNet_PTL
+  class: classifier.fracture_detector.model.${model.name}
+  pretrained:
+  params:
+    layers: 50
+    drop: 0.5
+    num_classes: 2
+
+tensorboard:
+  use: false
+  log_dir: ${workdir}/tensorboard/${dataset.name}_${pipeline}_${model.name}_${now:%Y-%m-%d}_${now:%H-%M-%S}
+  comment: 'no comment'
+

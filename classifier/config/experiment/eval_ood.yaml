@@ -1,0 +1,64 @@
+local_rank: 1
+save_gradcam : false
+gradcam_dir: gradcam_ood
+pickle_file :  /home/backbencher/DATA/wrist_data/ID_OOD/saved_data_ood.pkl
+save_defect: false
+defect_dir: defect_ood
+
+dataset:
+  name: ood
+  n_data_workers: 1
+  crop_size: 224
+  data_home: /home/backbencher/DATA/wrist_data/preprocessed_fixed
+  meta: /home/backbencher/DATA/wrist_data/ID_OOD/ood_meta.csv
+  ood_home: /home/backbencher/DATA/wrist_data/ID_OOD/
+  use_cutout: true
+  cutout: 0.1
+  use_target_jitter: false
+  keep_test_data: true
+  renew_test_split: true
+  augs:
+    flip:
+      axis: 1
+      p: 0.5
+    pad:
+      pad_x: 300
+      pad_y: 300
+    crop:
+      crop_x: 256
+      crop_y: 256
+save_path: /home/backbencher/DATA/wrist_data/ID_OOD/predictions.csv
+snapshot_folder: /home/backbencher/DATA/Wrist/fracture_detector/snapshots/WristFracture_SeResNet_PTL_2020-11-04_16-55-50
+save_image: false
+save_image_dir: /home/backbencher/DATA/Wrist/localizer/imgs
+gt:
+  - Fracture
+model:
+  name: SeResNet_PTL
+  class: classifier.fracture_detector.model.${model.name}
+  params:
+    layers: 50
+    drop: 0.5
+    num_classes: 2
+loss:
+  class_name: torch.nn.CrossEntropyLoss
+localizer:
+  snapshot_folder: /home/backbencher/DATA/Wrist/localizer/snapshots/HourglassNet_PTL_2020-07-24_17-58-44
+  dataset:
+    train_data_home: /home/backbencher/DATA/wrist_data/Rais/train/localization_preprocessed
+    crop_size: 256
+  model:
+    name: HourglassNet_PTL
+    class: localizer.model.${model.name}
+    params:
+          n_inputs: 1 # input channel
+          n_outputs: 3
+          bw: 64
+          hg_depth: 6
+          upmode: 'bilinear'
+          multiscale_hg_block: false
+          se: false
+          se_ratio: 16
+  loss:
+    class_name: torch.nn.SmoothL1Loss
+
