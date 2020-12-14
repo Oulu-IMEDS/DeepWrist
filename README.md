@@ -1,12 +1,12 @@
-# DeepWrist
+# Paper Link 
+Title: Deep Learning for Wrist Fracture Detection: Are We There Yet? <br />
+[arXiv link](https://arxiv.org/abs/2012.02577) 
 
+# DeepWrist Pipeline
 A transfer learning pipeline to detect wrist fracture from DICOM files. It has two blocks: Landmark Localization Block 
 and Fracture Detection Block.
 ![DeepWrist](./figures/DeepWrist_pipeline.png)
 
-## Paper Link 
-Title: Deep Learning for Wrist Fracture Detection: Are We There Yet? <br />
-[arXiv link](https://arxiv.org/abs/2012.02577)
 
 Both of the blocks are yml configuration based. We used OmegaConf for this purpose. Each executable python file can 
 either run standalone or requires a yml file as `experiment` argument to be passed down at command line. 
