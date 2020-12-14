@@ -117,7 +117,12 @@ This will do inference on your data, the predicitons will be saved in the csv fi
 
 
 ## 
-
+# Trained Models 
+Use the following commands to get the trained models. 
+``` 
+wget http://mipt-ml.oulu.fi/models/DeepWrist/Fracture_Detection_Block.tar.gz
+wget http://mipt-ml.oulu.fi/models/DeepWrist/ROI_Localization_Block.tar.gz
+```
 # How to Cite
 For citation, please use the following bibtex 
 ``` 
